@@ -1,0 +1,107 @@
+
+.card {
+    padding: 16px;
+    position: relative;
+    transition: box-shadow .2s ease-in-out;
+    background-color: #fff;
+    overflow-x: hidden;
+    min-width: 25%;
+    width: 245px;
+    cursor: pointer;
+    .product-img-block {
+        height: 280px;
+        width: 200px;
+        position: relative;
+        margin: 0 auto 25px auto;
+        // padding: 0 0 40px 0;
+        .product-img {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            max-width: 100%;
+            max-height: 100%;
+        }
+    }
+    .product-desc{
+        padding-bottom: 5px;
+        display: block;
+        text-decoration: none;
+        color: #212121;
+        font-size: 14px;
+        line-height: 1.43;
+        &:hover {
+            color: #2874f0;
+            cursor: pointer;
+        }
+    }
+    .product-rate-rev {
+        display: flex;
+        cursor:auto;
+        // justify-content: space-between;
+        .product-rating {
+            line-height: normal;
+            display: flex;
+            color: #fff;
+            padding: 2px 4px 2px 6px;
+            border-radius: 2px;
+            font-weight: 500;
+            font-size: 12px;
+            vertical-align: middle;
+            background-color: #388e3c;
+            .star-icon {
+                width: 15px;
+                height: 15px;
+                margin: 1px 0 0 2px;
+            }
+        } 
+        .review{
+            padding-left: 8px;
+            color: #878787;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .assured-img {
+            width: 77px; 
+            height: 21px;
+            margin: 0 0 0 8px;
+        }
+    }
+    .product-value {
+        display: flex;
+        margin: 3px 0;
+        .price {
+            display: inline-block;
+            font-size: 18px;
+            font-weight: 500;
+            color: #212121;
+        }
+        .before-price {
+            display: inline-block;
+            margin:2px 0 0 8px;
+            color: #878787;
+            font-size: 14px;
+            text-decoration: line-through;
+        }
+        .price-off {
+            color: #388e3c;
+            letter-spacing: -.2px;
+            font-size: 13px;
+            font-weight: 500;
+            margin: 2px 0 0 8px;
+        }
+    }
+    .offer {
+        color: #388e3c;
+        font-weight: 700;
+        font-size: 14px;
+        margin: 5px 0 0;
+        cursor:auto;
+    }
+    &:hover{
+        box-shadow: 10px 0px 15px 0px rgb(0 0 0 / 15%);
+        // box-shadow: 10px 0px 15px 10px rgb(0, 0, 0, 0.2);
+    }
+} 

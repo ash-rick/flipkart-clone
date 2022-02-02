@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  padding: 1em;
+  background-color: #2874f0;
+}
+
+.header .header-logo .logo-img {
+  width: 75px;
+}
+
+.header .header-search-bar .search-input {
+  color: #fff;
+}
+
+.header .header-login .login-button {
+  border-radius: 0;
+  background-color: #fff;
+}
+/*# sourceMappingURL=Header.css.map */
