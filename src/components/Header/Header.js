@@ -148,27 +148,36 @@ function Header(props) {
     }
     
     const requestOTP = () => {
-      genrateRecaptcha();
-      const appVerifier = window.recaptchaVerifier;
-      signInWithPhoneNumber(auth, `+91${Phone}`, appVerifier)
-      .then((confirmationResult) => {
-      
-        window.confirmationResult = confirmationResult;
-        toast.success(`OTP sent on mobile number ${Phone}`,{
-          theme: 'dark'
+      if(Phone) {
+        console.log(Phone)
+        genrateRecaptcha();
+        const appVerifier = window.recaptchaVerifier;
+        signInWithPhoneNumber(auth, `+91${Phone}`, appVerifier)
+        .then((confirmationResult) => {
+        
+          window.confirmationResult = confirmationResult;
+          toast.success(`OTP sent on mobile number ${Phone}`,{
+            theme: 'dark'
+          });
+          setIsOtpModal(true)
+          console.log(isOtpModal)
+          // ...
+        })
+    
+        .catch((error) => {
+          let index = error.message.indexOf('/');
+          toast.error(error.message.slice(index+1,-2), {
+            theme: 'dark',
+            position: 'top-center'
+          });
         });
-        setIsOtpModal(true)
-        console.log(isOtpModal)
-        // ...
-      })
-  
-      .catch((error) => {
-        let index = error.message.indexOf('/');
-        toast.error(error.message.slice(index+1,-2), {
+      }
+      else {
+        toast.error('Enter your mobile number first !', {
           theme: 'dark',
           position: 'top-center'
-        });
-      });
+        })
+      }
     }
 
     const verifyOTP = () => {
@@ -225,20 +234,20 @@ function Header(props) {
                     
                     <div className="divOuter">
                       <div className="divInner">
-                        <input className="partitioned" type="text" maxLength="6" onChange={(e) => setOTP(e.target.value)}/>
+                        <input className="partitioned" type="text" maxLength="6" onChange={(e) => setOTP(e.target.value)} autoFocus/>
                       </div>
                     </div>
                     <Button className='verify-otp' onClick={() => verifyOTP()}>Verify</Button>
                     <div className='not-recevie'>
                       <p className='not-recevied-text'>Not recevied your code?</p>
-                      <p className='resend-code' onClick={() => requestOTP()}>Resend code</p>
+                      <p className='resend-code' >Resend code</p>
                     </div>
                   </div>
                   :
                   <form autoComplete='on'>
                     <TextField
                       className="email-field"
-                      label="Enter Email/Mobile number"
+                      label={`Enter Email ${isLoginModal ? '/Mobile number' : ''}`}
                       type="text"
                       defaultValue={Email ? Email : Phone}
                       onChange={(e) => {
@@ -255,12 +264,13 @@ function Header(props) {
         
                       }}
                       variant="standard"
-                      InputProps={{
-
-                        endAdornment: (
-                            <p className='forgot'onClick={() => forgotPassword()}>Forgot?</p>
-                        ),
-                      }}
+                     
+                        InputProps={{
+                          endAdornment: (
+                            <p className='forgot'onClick={() => forgotPassword()}> {isLoginModal ? 'Forgot?' : ''}</p>
+                          ),
+                        }}
+                      
                     />
                     <p className='login-terms'>By continuing, you agree to Flipkart's <span className='blue-link'>Terms of Use</span> and <span className='blue-link'>Privacy Policy</span>.</p>
                     <div id='recaptcha-c'></div>
