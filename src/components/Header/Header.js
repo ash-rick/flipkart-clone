@@ -69,7 +69,6 @@ function Header(props) {
       
       try {
         if(Phone) {
-          console.log(Phone)
           await signInWithPhoneNumber(auth, Phone);
         }
         const user = await createUserWithEmailAndPassword(
@@ -87,9 +86,6 @@ function Header(props) {
           theme: 'dark'
         });
       }
-      toast.success(`welcom in success`, {
-          theme: 'dark'
-        });
     };
 
     const login = async () => {
