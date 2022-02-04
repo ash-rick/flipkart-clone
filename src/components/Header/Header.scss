@@ -81,6 +81,9 @@
                     color: #2874f0;
                 }
             }
+            #recaptcha-c {
+                margin-top: 5px;
+            }
             .btn-login{
                 margin: 15px 0;
                 background: #fb641b;
@@ -135,6 +138,7 @@
                     .change {
                         color: #2874f0;
                         font-weight: 500;
+                        margin-left: 4px;
                         text-align: center;
                         font-size: 16px;
                         cursor: pointer;

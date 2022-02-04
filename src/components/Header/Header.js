@@ -140,7 +140,7 @@ function Header(props) {
 
     const  genrateRecaptcha = () => {
       window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-c', {
-        'size': 'invisible',
+        // 'size': 'invisible',
         'callback': (response) => {
         }
       }, auth);
@@ -263,6 +263,7 @@ function Header(props) {
                       }}
                     />
                     <p className='login-terms'>By continuing, you agree to Flipkart's <span className='blue-link'>Terms of Use</span> and <span className='blue-link'>Privacy Policy</span>.</p>
+                    <div id='recaptcha-c'></div>
                     <Button className='btn-login' onClick={() => {isLoginModal ? login() : register()}} >{isLoginModal ? 'login' : 'sign up'}</Button>
                     {isLoginModal && <div className='another-method'> 
                       <p className='or'>OR</p>
@@ -321,7 +322,7 @@ function Header(props) {
             }
         
           </div>
-          <div id='recaptcha-c'></div>
+          
       </>
        
     )
