@@ -34,13 +34,14 @@
                 
             }
             .show-img {
-                // width: 33%;
-                padding: 3% 0;
+                padding: 3% 0 3% 7%;
                 box-sizing: border-box;
                 border: 1px solid #f0f0f0;
-                .show-pro-img {
-                    width: 31vw;
+                width: 31vw;
                     height: 400px;
+                .show-pro-img {
+                    width: 25vw;
+                    height: 350px;
                 }
             }
         }

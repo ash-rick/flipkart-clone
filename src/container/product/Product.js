@@ -31,6 +31,12 @@ function Product(props) {
 
     let breadcrumbs_list = ['home', 'mobile & accessories', 'mobile glass'];
 
+    const imageShow = (p) => {
+        console.log(first_img)
+        setMainImage(p);
+        first_img = '';
+        console.log(first_img)
+    }
     const cartAdded = (pro) => {
         
         dispatch(addCartData(cart_data ,pro));
@@ -71,13 +77,13 @@ function Product(props) {
                     <div className='product-images'>
                         <div className='product-all-img'>
                             { pro.images && pro.images.map((p, i) => 
-                                <div key={i} className='pro-img-div' onMouseOver={() => setMainImage(p)}>               
+                                <div key={i} className='pro-img-div' onMouseOver={() => imageShow(p)}>               
                                     <img className='pro-img' src={p} alt='' />
                                 </div>
                             )}   
                         </div>
                         <div className='show-img'>
-                            <img className='show-pro-img' src={mainImage ? mainImage : first_img} alt='' />
+                            <img className='show-pro-img' src={mainImage && pro.images.find(p => p === mainImage) ? mainImage : first_img} alt='' />
                         </div>
                     </div>
                     <div className='product-buttons'>
