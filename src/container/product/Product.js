@@ -103,7 +103,7 @@ function Product(props) {
                     {pro.specialPrice && <div className='spacial-price'>Spacial Price</div>}
                     <div className='product-price'>
                         <p className='price'>₹{Math.round(pro.price - pro.price*(pro.discount/100))}</p>
-                        <p className='before-price'>{pro.price}</p>
+                        <p className='before-price'>₹{pro.price}</p>
                         <p className='price-off'>{pro.discount}% off</p>
                         <Info className='price-info'/>
                     </div>

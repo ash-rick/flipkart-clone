@@ -60,7 +60,7 @@ function Cart() {
     return( 
     <>  
       <Header cart={true} cartData={cart_data[cart_data.length-1]}/>
-	    {cart_data.length == 0 ? 
+	    {cart_data.length === 0 ? 
 			<div className='cart-empty-page'>
 				<div className='cart-empty'>My Cart Empty</div>
 				<div className='empty-cart-mid'>

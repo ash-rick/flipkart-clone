@@ -12,10 +12,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'components/Header/Header.scss'
 import {
   createUserWithEmailAndPassword,
+  signInWithPhoneNumber,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   onAuthStateChanged,
   signOut,
+  RecaptchaVerifier
 } from "firebase/auth";
 import { auth } from 'firebase-config'
  
@@ -24,16 +26,19 @@ function Header(props) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const cart_data = useSelector(state => state.Data.cart_data);
-    const [modalIsOpen, setIsOpen] = useState(false);
+
 
     // const [registerEmail, setRegisterEmail] = useState("");
     // const [registerPassword, setRegisterPassword] = useState("");
     // const [loginEmail, setLoginEmail] = useState("");
     // const [loginPassword, setLoginPassword] = useState("");
+    const [Phone, setPhone] = useState('');
     const [Email, setEmail] = useState("");
     const [Password, setPassword] = useState("");
+    const [modalIsOpen, setIsOpen] = useState(false);
     const [isLoginModal, setIsLoginModal] = useState(true);
-  
+    const [isOtpModal, setIsOtpModal] = useState(false);
+    const [OTP, setOTP] = useState('');
     const [user, setUser] = useState({});
     // console.log(auth);
     const openModal = () => {
@@ -45,6 +50,13 @@ function Header(props) {
       setIsOpen(false);
     }
 
+    const catchEmailOrPhone = (value) => {
+      let num_reg =  /^\d+$/;
+      if(num_reg.test(value)) {
+        setPhone(value);
+      }
+      else setEmail(value);
+    } 
     useEffect(() => {
       dispatch(nowUser(user));
     }, [user])
@@ -56,6 +68,10 @@ function Header(props) {
     const register = async () => {
       
       try {
+        if(Phone) {
+          console.log(Phone)
+          await signInWithPhoneNumber(auth, Phone);
+        }
         const user = await createUserWithEmailAndPassword(
           auth,
           Email,
@@ -71,7 +87,7 @@ function Header(props) {
           theme: 'dark'
         });
       }
-      toast.success(`welcom ${user.email} in success`, {
+      toast.success(`welcom in success`, {
           theme: 'dark'
         });
     };
@@ -79,11 +95,13 @@ function Header(props) {
     const login = async () => {
     
       try {
+       
         const user = await signInWithEmailAndPassword(
           auth,
           Email,
           Password
         );
+      
         toast.success(`loggedin success`, {
           theme: 'dark'
         });
@@ -104,7 +122,78 @@ function Header(props) {
         position: 'bottom-center'
       });
     };
+    const forgotPassword = async () => {
+      try {
+        await sendPasswordResetEmail(auth, Email);
+        toast.success(`password reset link successfully send please check your email...`, {
+          theme: 'dark'
+        });
+      }
+      catch(error) {
+        let index = error.message.indexOf('/');
+        toast.error(error.message.slice(index+1,-2), {
+          theme: 'dark',
+          position: 'top-center'
+        });
+      }
+    }
+
+    const  genrateRecaptcha = () => {
+      window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-c', {
+        'size': 'invisible',
+        'callback': (response) => {
+        }
+      }, auth);
+      
+    }
     
+    const requestOTP = () => {
+      genrateRecaptcha();
+      const appVerifier = window.recaptchaVerifier;
+      signInWithPhoneNumber(auth, `+91${Phone}`, appVerifier)
+      .then((confirmationResult) => {
+      
+        window.confirmationResult = confirmationResult;
+        toast.success(`OTP sent on mobile number ${Phone}`,{
+          theme: 'dark'
+        });
+        setIsOtpModal(true)
+        console.log(isOtpModal)
+        // ...
+      })
+  
+      .catch((error) => {
+        let index = error.message.indexOf('/');
+        toast.error(error.message.slice(index+1,-2), {
+          theme: 'dark',
+          position: 'top-center'
+        });
+      });
+    }
+
+    const verifyOTP = () => {
+      // let otp = e.target.value;
+      // setOTP(otp);
+      if(OTP.length === 6) {
+        let confirmationResult = window.confirmationResult;
+        confirmationResult.confirm(OTP).then((result) => {
+          const user = result.user;
+          setUser(user);
+          setIsOtpModal(isOtpModal => !isOtpModal)
+          closeModal();
+          toast.success('loggedin success', {
+            theme: 'dark',
+            position: 'top-center'
+          });
+        }).catch((error) => {
+          let index = error.message.indexOf('/');
+          toast.error(error.message.slice(index+1,-2), {
+            theme: 'dark',
+            position: 'top-center'
+          });
+        });
+      }
+    }
     Modal.setAppElement('#root');
     
 
@@ -117,7 +206,7 @@ function Header(props) {
             overlayClassName="Overlay"
             contentLabel="Example Modal"
           >
-            
+           
             <div className='login-modal'>
               <div className='modal-left'>
                 <p className='login-text'>{isLoginModal ? 'Login' : 'Looks like you\'re new here!'}</p>
@@ -125,41 +214,63 @@ function Header(props) {
                 <img className='login-img' src='https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/login_img_c4a81e.png' alt='login-img'/>
               </div>
               <div className='modal-right'>
-                <form autoComplete='on'>
-                  <TextField
-                    className="email-field"
-                    label="Enter Email/Mobile number"
-                    type="email"
-                    onChange={(e) => {
-                      setEmail(e.target.value)
-                      // isLoginModal ? setLoginEmail(e.target.value) : setRegisterEmail(e.target.value);
-                    }}
-                    variant="standard"
-                  />
-                  <TextField
-                    className="email-field"
-                    label="Enter Password"
-                    type="password"
-                    onChange={(e) => {
-                      setPassword(e.target.value)
-                      // isLoginModal ? setLoginPassword(e.target.value): setRegisterPassword(e.target.value);
-                    }}
-                    variant="standard"
-                    InputProps={{
-                      endAdornment: (
-                          <Visibility className='visibility-icon'/>
-                      ),
-                    }}
-                  />
-                  <p className='login-terms'>By continuing, you agree to Flipkart's <span className='blue-link'>Terms of Use</span> and <span className='blue-link'>Privacy Policy</span>.</p>
-                  <Button className='btn-login' onClick={() => {isLoginModal ? login() : register()}} >{isLoginModal ? 'login' : 'sign up'}</Button>
-                  {isLoginModal && <div className='another-method'> 
-                    <p className='or'>OR</p>
-                    <Button variant='text'className='btn-otp' >Request OTP</Button>
-                  </div>}
-                  <p className='create-acc' onClick={() => {isLoginModal ? setIsLoginModal(false): setIsLoginModal(true)}}>{!isLoginModal ? 'Existing User? Log in' : 'New to Flipkart? Create an account'}</p>
-                </form>
-                
+                {isOtpModal?
+                  
+                  <div className='now-in-otp'>
+                    <p className='enter-otp-text'>Please enter the OTP sent to</p>
+                    <div className='change-num'>
+                      <p className='change-num-text'>{Phone}.</p>
+                      <p className='change' onClick={() => setIsOtpModal(false)}>change</p>
+                    </div>
+                    
+                    <div className="divOuter">
+                      <div className="divInner">
+                        <input className="partitioned" type="text" maxLength="6" onChange={(e) => setOTP(e.target.value)}/>
+                      </div>
+                    </div>
+                    <Button className='verify-otp' onClick={() => verifyOTP()}>Verify</Button>
+                    <div className='not-recevie'>
+                      <p className='not-recevied-text'>Not recevied your code?</p>
+                      <p className='resend-code' onClick={() => requestOTP()}>Resend code</p>
+                    </div>
+                  </div>
+                  :
+                  <form autoComplete='on'>
+                    <TextField
+                      className="email-field"
+                      label="Enter Email/Mobile number"
+                      type="text"
+                      defaultValue={Email ? Email : Phone}
+                      onChange={(e) => {
+                        catchEmailOrPhone(e.target.value);
+                      }}
+                      variant="standard"
+                    />
+                    <TextField
+                      className="email-field"
+                      label="Enter Password"
+                      type="password"
+                      onChange={(e) => {
+                        setPassword(e.target.value)
+        
+                      }}
+                      variant="standard"
+                      InputProps={{
+
+                        endAdornment: (
+                            <p className='forgot'onClick={() => forgotPassword()}>Forgot?</p>
+                        ),
+                      }}
+                    />
+                    <p className='login-terms'>By continuing, you agree to Flipkart's <span className='blue-link'>Terms of Use</span> and <span className='blue-link'>Privacy Policy</span>.</p>
+                    <Button className='btn-login' onClick={() => {isLoginModal ? login() : register()}} >{isLoginModal ? 'login' : 'sign up'}</Button>
+                    {isLoginModal && <div className='another-method'> 
+                      <p className='or'>OR</p>
+                      <Button className='btn-otp' onClick={() => requestOTP()}>Request OTP</Button>
+                    </div>}
+                    <p className='create-acc' onClick={() => {isLoginModal ? setIsLoginModal(false): setIsLoginModal(true)}}>{!isLoginModal ? 'Existing User? Log in' : 'New to Flipkart? Create an account'}</p>
+                  </form>
+                }
               </div>
             </div>
             <Close onClick={() => closeModal()} className='close-modal'></Close>
@@ -210,6 +321,7 @@ function Header(props) {
             }
         
           </div>
+          <div id='recaptcha-c'></div>
       </>
        
     )
